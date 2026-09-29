@@ -1,5 +1,9 @@
 ﻿from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 Base = declarative_base()
 
@@ -47,7 +51,7 @@ class Edge(Base):
     edge_type = Column(String)
 
 
-DATABASE_URL = "postgresql://postgres:yashvi1@localhost:5432/codelens_db"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL)
 
