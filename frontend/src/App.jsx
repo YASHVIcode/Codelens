@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import './App.css'
@@ -14,15 +14,15 @@ function App() {
   const [statusMessage, setStatusMessage] = useState('');
 
   const fetchAnalysisData = async () => {
-    const deadCodeRes = await fetch('http://127.0.0.1:8000/dead-code');
+    const deadCodeRes = await fetch('https://codelens-backend-2dfu.onrender.com/dead-code');
     const deadCodeData = await deadCodeRes.json();
     setDeadCode(deadCodeData.dead_code);
 
-    const mostCalledRes = await fetch('http://127.0.0.1:8000/most-called');
+    const mostCalledRes = await fetch('https://codelens-backend-2dfu.onrender.com/most-called');
     const mostCalledData = await mostCalledRes.json();
     setMostCalled(mostCalledData.most_called);
 
-    const graphRes = await fetch('http://127.0.0.1:8000/graph');
+    const graphRes = await fetch('https://codelens-backend-2dfu.onrender.com/graph');
     const graphData = await graphRes.json();
 
     const deadNodeNames = new Set(deadCodeData.dead_code.map(n => n.name));
@@ -76,7 +76,7 @@ function App() {
     setLoading(true);
     setStatusMessage('Cloning aur analyzing... thoda time lagega');
     try {
-      const res = await fetch('http://127.0.0.1:8000/analyze-github', {
+      const res = await fetch('https://codelens-backend-2dfu.onrender.com/analyze-github', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ repo_url: repoUrl })
