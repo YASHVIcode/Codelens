@@ -2,13 +2,13 @@
 import os
 import shutil
 import uuid
+import subprocess
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import git
 
 from models.db_models import SessionLocal, Project, File, Node, Edge
 from ingest import ingest_project
@@ -72,7 +72,16 @@ def analyze_github(request: GitHubRequest):
     os.makedirs(temp_folder, exist_ok=True)
 
     try:
-        git.Repo.clone_from(repo_url, temp_folder)
+        result = subprocess.run(
+            ["git", "clone", "--depth", "1", repo_url, temp_folder],
+            env=os.environ.copy(),
+            capture_output=True,
+            text=True,
+            timeout=120
+        )
+        if result.returncode != 0:
+            shutil.rmtree(temp_folder, ignore_errors=True)
+            return {"status": "error", "message": f"Clone failed: {result.stderr}"}
     except Exception as e:
         shutil.rmtree(temp_folder, ignore_errors=True)
         return {"status": "error", "message": f"Clone failed: {str(e)}"}
